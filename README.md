@@ -43,3 +43,8 @@ That leaves any or / all of these non-mandated data points commonly measured on 
 * Cylinder Head Temperature (x1-6)
 * Exhaust Gas Temperature (x1-6)
 * Fuel Flow (digital input)
+
+## The board
+![alt text](https://2.bp.blogspot.com/-hmfU_t731m4/WY2YKBQSxEI/AAAAAAAAMsY/hXmvPc_4McYqGNxrQ8MHipueo1vy2iaqQCKgBGAs/s1600/20160601_071439.jpg "Sport VFR Board")
+
+I made an interfacing daughter-board for the Atmega32U4 Micro Pro.  Schematics, Board and Gerber files are included in this repo.  Have at it.
