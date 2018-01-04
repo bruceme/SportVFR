@@ -1,6 +1,8 @@
 # SportVFR
 An open-source DIY flight instrument
 
+![alt text](https://4.bp.blogspot.com/-GkP8dgFIXWg/WY2YKC37I7I/AAAAAAAAMsY/HeARyIRffEwuhb2vx854bXn1ijqGvWt4QCKgBGAs/s1600/20160601_071528.jpg "Sport VFR DIY project")
+
 I've had a smattering of interest in this project.  I have continued to dabble with it on and off.  Here are some thoughts.
 
 # Project updates / thoughts.
