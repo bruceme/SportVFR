@@ -16,9 +16,9 @@ I honestly like both ideas but I lean toward the later as it's simpler and more 
 
 ## IMU Considerations
 
-	* Sensors 
+* Sensors 
 	  The checked in code uses a HMC5883. The MPU9250 is newer, I would substitute.  This is a 	  raw output sensor, and requires pretty complex 4-dof (quaternion) summing to output useful attitude data.  The altitude pressure sensor are adiquate and usually come with the attitude module.
-	* Cleanflight / Naze32 upgrade?
+* Cleanflight / Naze32 upgrade?
 	  The Naze32 quad IMU is a nice complete inertia system with tons of great support from the quad copter community.  I have some great success setting it up in aircraft mode and interfacing via serial MultiWii protocol. It output all attitude and altitude data raw with very fast refresh.  It also supports GPS.
 
 ## Airspeed and AoA - "MPXV7002DP module"
@@ -27,16 +27,16 @@ I honestly like both ideas but I lean toward the later as it's simpler and more 
 ## Engine/Aircraft System Data Acquisition
   There are only 8 analog input channels. That is limiting, but can support all required inputs;
   
-	* Oil Temperature
-	* Oil Pressure
-	* Electrical System Voltage
-	* Engine RPM (digital input)
-	* Fuel Pressure
-	* Fuel Quantity each tank
-	* Manifold pressure (only required if not fixed-pitch propeller)
+* Oil Temperature
+* Oil Pressure
+* Electrical System Voltage
+* Engine RPM (digital input)
+* Fuel Pressure
+* Fuel Quantity each tank
+* Manifold pressure (only required if not fixed-pitch propeller)
 
 	That leaves any or / all of these non-mandated data points commonly measured on most aircraft;
-	* Ammeter
-	* Cylinder Head Temperature (x1-6)
-	* Exhaust Gas Temperature (x1-6)
-	* Fuel Flow (digital input)
+* Ammeter
+* Cylinder Head Temperature (x1-6)
+* Exhaust Gas Temperature (x1-6)
+* Fuel Flow (digital input)
