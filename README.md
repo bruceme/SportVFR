@@ -36,15 +36,38 @@ There are only 8 analog input channels. That is limiting, but can support all re
 * Fuel Pressure
 * Fuel Quantity each tank
 * Manifold pressure (only required if not fixed-pitch propeller)
-* Altimeter
-* Compass
-* Airspeed
+* Altimeter (I2C)
+* Compass (I2C)
+* Airspeed 
 
 That leaves any or / all of these non-mandated data points commonly measured on most aircraft;
 * Ammeter
 * Cylinder Head Temperature (x1-6)
 * Exhaust Gas Temperature (x1-6)
 * Fuel Flow (digital input)
+
+  
+|                          | Interface         | Sensor     |
+|--------------------------|-------------------|------------|
+| Airspeed                 | Analog Voltage    | MPXV7002DP |
+| Altitude                 | Serial - I2C      | BMP180     |
+| Compass                  | Serial - I2C      | MPU9250    |
+| Oil Temperature          | Analog Resistive  |            |
+| Oil Pressure             | Analog Resistive  |            |
+| Engine RPM               | Digital - Counter |            |
+| Manifold Pressure, if CS | Analog Resistive  |            |
+| Fuel Pressure            | Analog Resistive  |            |
+| Fuel Quantity, each tank | Analog Resistive  |            |
+
+	That leaves any or / all of these non-mandated data points commonly measured on most aircraft;
+
+|                          | Interface         | Sensor     |
+|--------------------------|-------------------|------------|
+| Electric System Voltage  | Analog            |            |
+| Ammeter                  | I2C               | ACS712ELC  |
+| Cylinder Head 1-6        | Analog Resistive  |            |
+| Exhaust Gas   1-6        | Analog Resistive  |            |
+| Fuel Flow                | Digital - Counter |            |
 
 ## The board
 ![alt text](https://2.bp.blogspot.com/-hmfU_t731m4/WY2YKBQSxEI/AAAAAAAAMsY/hXmvPc_4McYqGNxrQ8MHipueo1vy2iaqQCKgBGAs/s1600/20160601_071439.jpg "Sport VFR Board")
