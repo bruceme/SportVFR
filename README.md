@@ -25,7 +25,7 @@ I honestly like both ideas but I lean toward the later as it's simpler and more 
   Pressure transducers with Op-Amp levelling output to 0-Vcc on small pitot-static pressure variance
   
 ## Engine/Aircraft System Data Acquisition
-  There are only 8 analog input channels. That is limiting, but can support all required inputs;
+There are only 8 analog input channels. That is limiting, but can support all required inputs;
   
 * Oil Temperature
 * Oil Pressure
@@ -35,7 +35,8 @@ I honestly like both ideas but I lean toward the later as it's simpler and more 
 * Fuel Quantity each tank
 * Manifold pressure (only required if not fixed-pitch propeller)
 
-	That leaves any or / all of these non-mandated data points commonly measured on most aircraft;
+
+That leaves any or / all of these non-mandated data points commonly measured on most aircraft;
 * Ammeter
 * Cylinder Head Temperature (x1-6)
 * Exhaust Gas Temperature (x1-6)
