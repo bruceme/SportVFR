@@ -11,8 +11,7 @@ I've had a smattering of interest in this project.  I have continued to dabble w
 
 One could easily built an entire dedicated flight information display system (EFIS/ECAM) around this platform.
 
-Or... You could say that any phone or tablet is a perfectly robust flight display system and what if you just focussed on all the data a phone/tablet can't get easily.  Airspeed, Compass, Engine, System sensors, etc.
-
+Or... You could say that any phone or tablet is a perfectly robust flight display system and what if you just focussed on all the data a phone/tablet can't get easily.  Airspeed, Compass, Engine, System sensors, etc.  The project needs to be integrated with a bluetooth transciever (HC-05).  Updates can easily be made to Avare for Android.  At some point compatability with other IMUs would be good so more wide adoption can be considered.
 
 I honestly like both ideas but I lean toward the later as it's simpler and more direct.  Either way, I'd like to leave this project open-ended and not make any decisions that presuppose a display system.  
 
@@ -57,6 +56,3 @@ There are only 8 analog input channels. That is limiting, but can support all re
 
 I made an interfacing daughter-board for the Atmega32U4 Micro Pro.  Schematics, Board and Gerber files are included in this repo.  Have at it.
 
-## Display Integration
-
-The project needs to be integrated with a bluetooth transciever (HC-05).  Updates can easily be made to Avare for Android.  At some point compatability with other IMUs would be good so more wide adoption can be considered.
