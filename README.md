@@ -56,3 +56,7 @@ There are only 8 analog input channels. That is limiting, but can support all re
 ![alt text](https://2.bp.blogspot.com/-hmfU_t731m4/WY2YKBQSxEI/AAAAAAAAMsY/hXmvPc_4McYqGNxrQ8MHipueo1vy2iaqQCKgBGAs/s1600/20160601_071439.jpg "Sport VFR Board")
 
 I made an interfacing daughter-board for the Atmega32U4 Micro Pro.  Schematics, Board and Gerber files are included in this repo.  Have at it.
+
+## Display Integration
+
+The project needs to be integrated with a bluetooth transciever (HC-05).  Updates can easily be made to Avare for Android.  At some point compatability with other IMUs would be good so more wide adoption can be considered.
