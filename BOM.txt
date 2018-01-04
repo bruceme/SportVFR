@@ -1,0 +1,18 @@
+Bill of Materials for a basic SportVFR board;
+
+This may be somewhat dated on components, I first built this two years ago.
+
+MCU - search for "Pro Micro atmega32u4"
+
+IMU - Search for "10-dof IMU" consists of...
+  MPU9250 - 3-Acc + 3-Gyro + 3-Mag  NOTE: Code uses HMC5883. MPU9250 is newer, I would substitute.
+  BMP180  - Altimeter
+  
+Air Pressure sensors (Airspeed / AoA)
+  Search for "MPXV7002DP module"
+  
+Display - "I2C 1602 Character LCD Display"
+
+Input - Rotary Encoder  
+    Note: Consider using RE with embedded I2C output controller; using the primary MCU to catch rotary encoder interrupts was tricky "glitched a lot".
+
