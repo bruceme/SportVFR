@@ -36,7 +36,9 @@ There are only 8 analog input channels. That is limiting, but can support all re
 * Fuel Pressure
 * Fuel Quantity each tank
 * Manifold pressure (only required if not fixed-pitch propeller)
-
+* Altimeter
+* Compass
+* Airspeed
 
 That leaves any or / all of these non-mandated data points commonly measured on most aircraft;
 * Ammeter
