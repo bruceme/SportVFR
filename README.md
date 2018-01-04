@@ -28,23 +28,6 @@ I honestly like both ideas but I lean toward the later as it's simpler and more 
   
 ## Engine/Aircraft System Data Acquisition
 There are only 8 analog input channels. That is limiting, but can support all required inputs;
-  
-* Oil Temperature
-* Oil Pressure
-* Electrical System Voltage
-* Engine RPM (digital input)
-* Fuel Pressure
-* Fuel Quantity each tank
-* Manifold pressure (only required if not fixed-pitch propeller)
-* Altimeter (I2C)
-* Compass (I2C)
-* Airspeed 
-
-That leaves any or / all of these non-mandated data points commonly measured on most aircraft;
-* Ammeter
-* Cylinder Head Temperature (x1-6)
-* Exhaust Gas Temperature (x1-6)
-* Fuel Flow (digital input)
 
   
 |                          | Interface         | Sensor     |
