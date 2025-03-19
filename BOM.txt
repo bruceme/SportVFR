@@ -1,18 +1,25 @@
-Bill of Materials for a basic SportVFR board;
+Bill of Materials for a basic SportVFR board;  Most of these materials you can find with a quick search on the jungle store.
 
-This may be somewhat dated on components, I first built this two years ago.
+MCU - "Pro Micro atmega32u4"
 
-MCU - search for "Pro Micro atmega32u4"
-
-IMU - Search for "10-dof IMU" consists of...
+IMU - GY-652 "10-dof IMU" consists of...
   MPU9250 - 3-Acc + 3-Gyro + 3-Mag  NOTE: Code uses HMC5883. MPU9250 is newer, I would substitute.
   BMP180  - Altimeter
   
 Air Pressure sensors (Airspeed / AoA)
-  Search for "MPXV7002DP module"
+    ABPMRRV060MG2A3 - https://www.mouser.com/ProductDetail/Honeywell/ABPMRRV060MG2A3?qs=OTrKUuiFdkZ2B8eiLukmLQ%3D%3D
   
-Display - "I2C 1602 Character LCD Display"
+  Alternatives (will require re-coding): 
+	PX4 Airspeed Module (MS4525DO is the sensor)
+	MPXV7002DP - This is differential analog
 
-Input - Rotary Encoder  
-    Note: Consider using RE with embedded I2C output controller; using the primary MCU to catch rotary encoder interrupts was tricky "glitched a lot".
+Engine Sensors
+	Tach - This is a 2-pulse per rotation 12v signal coming from my Magnetos, it's voltage split to 0-5v
+	
+	Oil Temp, Oil Pressure, Fuel Pressure, Fuel Quantity - These are all resistivity sensors with a typical operating range of 0-5kohm.  You can use any sensors that work on your engine.  You will need to calibrate them in the code.
+  
+Display - HD44780 - I2C 1602 Character LCD Display
 
+Input - Rotary Encoder (CYT1100), usually comes with a small knob
+
+Alert LED - 10mm Red LED
