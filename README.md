@@ -1,4 +1,7 @@
 # SportVFR
+
+!CATION! - Work in progress (see updates coming soon, mostly to the code)
+
 An open-source DIY flight instrument
 
 ![SportVFR](images/sportvfr%20on%20panel.png)
@@ -105,18 +108,20 @@ For the case, print it yourself or send it out.  It does require 4 6x8mm "thread
 
 ## Testing and Calibration
 
+!CATION! - Work in progress (see updates coming soon)
+
 Once assembled and connected to sensors you will need to calibrate the system to your sensors.  This is done by entering calibration mode or sending the unit calibration commands via USB.  Please note the calibrations are unitless, you can use whatever units you want, so long as you remember them. Typical US units would be knots, gallons, psi and Fahrenheit... But you could calibrate in kph, liters, mPa and C or any combination so long as the numbers displayed on the screen make sense to you.
 
 Calibration points/ commands are:
 
-AS# - Airspeed x10. Example A0 is not moving, A6 is 60 airspeed units (on a calm day, connect it to a laptop and have someone drive you down the highway with the probe sticking directly into the air)
-OT## - Oil Temp x10. This does require at least two data points.  OT03 is 30, OT21 is 210 (boiling in F) (use ice water and boiling water as data points)
-OP# - Oil Pressure x10 OP0 for static, OP9 for 90 (use an air compressor)
-FP# - Fuel Pressure x10 FP0 for static, OP3 for 30 (use an air compressor)
-TT# - Tach pulses per rev (1,2,3,4..)
-F1## - Fuel quantity tank 1, in whole units (do at least 4 data points by filling with a known quantity of fuel, more is better)
-F2## - same tank 2
-CH## - Compass heading x10, like runway numbers (Ideally this is done installed in the aircraft with CH36 - North, CH09 - East...)
+- AS# - Airspeed x10. Example A0 is not moving, A6 is 60 airspeed units (on a calm day, connect it to a laptop and have someone drive you down the highway with the probe sticking directly into the air)
+- OT## - Oil Temp x10. This does require at least two data points.  OT03 is 30, OT21 is 210 (boiling in F) (use ice water and boiling water as data points)
+- OP# - Oil Pressure x10 OP0 for static, OP9 for 90 (use an air compressor)
+- FP# - Fuel Pressure x10 FP0 for static, OP3 for 30 (use an air compressor)
+- TT# - Tach pulses per rev (1,2,3,4..)
+- F1## - Fuel quantity tank 1, in whole units (do at least 4 data points by filling with a known quantity of fuel, more is better)
+- F2## - same tank 2
+- CH## - Compass heading x10, like runway numbers (Ideally this is done installed in the aircraft with CH36 - North, CH09 - East...)
 
 # Future thoughts...
 
