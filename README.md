@@ -87,7 +87,11 @@ I honestly like both ideas but I lean toward the later as it's simpler and more 
 
 ## The build
 
+![SportVFR Board](images/sportvfr%20board.jpeg)
+
 The [scheamtic/SportVFR_V2.zip] contains the Gerber files. These can be fabricated by multiple vendors.  My run of 5 was $20 shipped.  Most components are through-hole, but some are "large" format surface mounts that can be soldered by hand with medium soldering skills.  Installing the DB-9 right-angle connector is preferred so you can remove the display quickly later to work on your panel, but you may directly solder the input wires to the through-holes.
+
+![SportVFR Board](images/sportvfr%20case.jpeg)
 
 For the case, print it yourself or send it out.  It does require 4 6x8mm "threadserts" and M3 screws to mount to the panel.
 
