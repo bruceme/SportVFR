@@ -1,7 +1,7 @@
 # SportVFR
 An open-source DIY flight instrument
 
-![SportVFR](images/images/sportvfr%20on%20panel.png)
+![SportVFR](images/sportvfr%20on%20panel.png)
 
 I've had a smattering of interest in this project.  I have continued to dabble with it on and off.  Here are some thoughts.
 
