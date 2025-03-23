@@ -4,6 +4,8 @@
 
 An open-source DIY flight instrument
 
+![SportVFR](images/Case%20Prototype.jpeg)
+
 ![SportVFR](images/sportvfr%20on%20panel.png)
 
 Early Prototype (will post updates once v2 is ready, early April 2025)
