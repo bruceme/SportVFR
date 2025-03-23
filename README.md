@@ -19,7 +19,7 @@ There are only 8 analog input channels. That is limiting, but can support all re
   
 |                          | Interface         | Sensor     |
 |--------------------------|-------------------|------------|
-| Airspeed                 | Analog Voltage    | ABPMRRV060MG2A3 |
+| Airspeed                 | Serial - I2C      | ABPMRRV060MG2A3 |
 | Altitude                 | Serial - I2C      | BMP180 (GY-652) |
 | Compass                  | Serial - I2C      | MPU9250 (GY-652)|
 | Engine RPM               | Digital - Counter |            |
@@ -27,6 +27,7 @@ There are only 8 analog input channels. That is limiting, but can support all re
 | Oil Pressure             | Analog Resistive  |            |
 | Fuel Pressure            | Analog Resistive  |            |
 | Fuel Quantity, each tank | Analog Resistive  |            |
+| Tach Hour Meter	   | Uses Tach and time|            |
 
 <!---
 	That leaves any or / all of these non-mandated data points commonly measured on most aircraft;
@@ -58,7 +59,7 @@ There are only 8 analog input channels. That is limiting, but can support all re
 
 ### Engine Sensors
 
-- Tach: This is a 2-pulse per rotation 12v signal coming from my Magnetos, it's voltage split to 0-5v
+- Tach: This is a 2-pulse per rotation 12v signal coming from my Magnetos, it's voltage split to 0-5v.  You can change the number of pulses in the code.
 - Oil Temp, Oil Pressure, Fuel Pressure, Fuel Quantity : These are all resistivity sensors with a typical operating range of 0-5kohm.  You can use any sensors that work on your engine.  You will need to calibrate them in the code.
   
 ### Display
@@ -116,14 +117,15 @@ Once assembled and connected to sensors you will need to calibrate the system to
 
 Calibration points/ commands are:
 
-- AS# - Airspeed x10. Example A0 is not moving, A6 is 60 airspeed units (on a calm day, connect it to a laptop and have someone drive you down the highway with the probe sticking directly into the air)
-- OT## - Oil Temp x10. This does require at least two data points.  OT03 is 30, OT21 is 210 (boiling in F) (use ice water and boiling water as data points)
-- OP# - Oil Pressure x10 OP0 for static, OP9 for 90 (use an air compressor)
-- FP# - Fuel Pressure x10 FP0 for static, OP3 for 30 (use an air compressor)
-- TT# - Tach pulses per rev (1,2,3,4..)
-- F1## - Fuel quantity tank 1, in whole units (do at least 4 data points by filling with a known quantity of fuel, more is better)
-- F2## - same tank 2
-- CH## - Compass heading x10, like runway numbers (Ideally this is done installed in the aircraft with CH36 - North, CH09 - East...)
+You enter compass calibration mode by holding down the encoder button while powering up the unit.  From there you'll be prompted to move the plane in a circle... just follow the prompts.
+
+How to calibrate various sensors:  This calibration requires you to record values from the unconfigured device and enter them into the code.  You can always re-run these test by setting "InCongig" true and the values will get displayed.
+
+- Airspeed: Read the zero pressure at rest.  Using a hose connected to the top tube of the airspeed sensor, have someone drive you a known speed and record that speed it to that speed.  Enter those values for AirspeedZero and Airspeed60
+- Altimeter: Lookup the altitude of your current location.  Set the barometeric pressure to the closest known source and set the altitude in configuraton mode.
+- Tachometer: Look up PulsesPerRPM in the code and set that to tachometer source. 
+- Oil Temp: Set out a bowl of ice water and get a pot of boiling water, you'll use these test points to calibrate the temperature sensor.  Take the numbers displayed and put them into the code for OilTempMin and OilTempMax
+- Oil Pressure & Fuel Pressure: Set the zero pressure at rest.  If your sensors have NPT (nation pipe thread) fittings, they will likely fit directly into a standard compressor hose.  Fill your tank to a known pressure within the range of the sensor and set it to that.  Take the numbers displayed and put them into the code as Oil/Fuel Pressure Min & Max.
 
 # Future thoughts...
 
