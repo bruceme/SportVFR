@@ -119,6 +119,13 @@ Calibration points/ commands are:
 
 You enter compass calibration mode by holding down the encoder button while powering up the unit.  From there you'll be prompted to move the plane in a circle... just follow the prompts.
 
+NOTE: When the in-code varaibles is set to "InCalibrationMode = true" The display is outputing raw values.  The layout is similar to but not identical to the normal display mode in order to show all sensors outputs.  It as as follows:
+|                       |             |             |           |
+| --------------------- | ----------- | ----------- |---------- |
+| Airspeed              | Fuel Tank 1 | Fuel Tank 2 | Altitude  |
+| Oil Temperature       | Oil Press   | Fuel Press  |           | 
+
+
 How to calibrate various sensors:  This calibration requires you to record values from the unconfigured device and enter them into the code.  You can always re-run these test by setting "InCongig" true and the values will get displayed.
 
 - Airspeed: Read the zero pressure at rest.  Using a hose connected to the top tube of the airspeed sensor, have someone drive you a known speed and record that speed it to that speed.  Enter those values for AirspeedZero and Airspeed60
