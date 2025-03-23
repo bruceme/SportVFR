@@ -113,7 +113,7 @@ For the case, print it yourself or send it out.  It does require 4 6x8mm "thread
 
 !CATION! - Work in progress (see updates coming soon)
 
-Once assembled and connected to sensors you will need to calibrate the system to your sensors.  This is done by entering calibration mode or sending the unit calibration commands via USB.  Please note the calibrations are unitless, you can use whatever units you want, so long as you remember them. Typical US units would be knots, gallons, psi and Fahrenheit... But you could calibrate in kph, liters, mPa and C or any combination so long as the numbers displayed on the screen make sense to you.
+Once assembled and connected to sensors you will need to calibrate the system to your sensors.  This is done by compiling to the calibration mode and recording various values at known sensor points.  Please note the calibrations are unitless, you can use whatever units you want, so long as you remember them. Typical US units would be knots, gallons, psi and Fahrenheit... But you could calibrate in kph, liters, mPa and C or any combination so long as the numbers displayed on the screen make sense to you.
 
 Calibration points/ commands are:
 
