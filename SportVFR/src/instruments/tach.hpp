@@ -19,6 +19,5 @@ int ReadTachometer()
   int tachT = (int)tachFilter.updateEstimate(revolutions * 60 / (PulsesPerRev * (now - lastmillis)));
   revolutions = 0;
   attachTachInt();
-  lastmillis = now;
   return tachT ;
 }

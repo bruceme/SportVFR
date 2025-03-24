@@ -10,8 +10,6 @@ ezButton button(6); // 6 on the PCB
 #include <EEPROM.h>
 #include <SimpleKalmanFilter.h>
 
-#define PARAM_OFFSET 4
-
 #define deltaAltVSI 100
 
 #define BARROW_EEPROP_OFFSET 240
@@ -25,13 +23,15 @@ ezButton button(6); // 6 on the PCB
 #define MIN_FuelQuantity 30 // 3.0g
 #define ALARM_PIN 9 // On 8 on the PCB
 
-#include "mapped.hpp"
-Mapped airspeed(A8, 0); // pressure sensor
-Mapped oilPres(A1, 1);
-Mapped oilTemp(A0, 2);
-Mapped fuelPres(A2, 3);
-Mapped fuelQ1(10,4);
-Mapped fuelQ2(9,5);
+#include "MappedADC.hpp"
+#include "MappedAirspeed.hpp"
+
+MappedAirspeed airspeed(0); // pressure sensor
+MappedADC oilPres(A1, 1);
+MappedADC oilTemp(A0, 2);
+MappedADC fuelPres(A2, 3);
+MappedADC fuelQ1(10,4);
+MappedADC fuelQ2(9,5);
 // Mapped auxInput(A3,5); // optional
 
 int heading = 360;
@@ -46,7 +46,7 @@ int barrow;
 bool up;
 bool down;
 unsigned long now;
-const int barrowOffset = 3019 - 2995 - 7;  // current local barrow setting - what SportVFR shows as your altitude
+const int barrowOffset = 3019 - 2995 - 4;  // current local barrow setting - what SportVFR shows as your altitude
 
 #define FeetPerMeter 3.28084
 #define MPaPerBarrow_256 8669L  // barrow is 100 * InHq this 256 bigger than it needs to be (simple math)
@@ -67,39 +67,86 @@ int blinker = 0;
 #define PageCount 2
 int page = EnginePage;
 
+// Use this to display raw sensor output for configuration
+//#define SENSOR_CONFIG
+int fq1, fq2;
+int curDeltaTPhase = 0;
+
 void NormalDisplay()
 {
   now = millis();
-  if (now - lastmillis > 500)
-    tachometer = ReadTachometer();
+  auto deltaT = (int)(now - lastmillis);
+  auto deltaTPhase = deltaT / 100;
+  if (curDeltaTPhase != deltaTPhase)
+  {
+    curDeltaTPhase = deltaTPhase;
+    switch(deltaTPhase)
+    {
+      case 0:
+        tachometer = ReadTachometer();
+        heading = ReadCompass();
+        altitude = GetAltitude();
+        break;
+      case 1:
+        airspeed.Read();
+        oilTemp.Read();
+        oilPres.Read();
+        fuelPres.Read();
+      case 2:
+        fq1 = fuelQ1.Read(); fq1 = fq1 < 0 ? 0 : fq1;
+        fq2 = fuelQ2.Read(); fq2 = fq2 < 0 ? 0 : fq2;
+        auto fp = fuelPres.QuickRead();
+        auto ot = oilTemp.QuickRead();
+        auto op = oilPres.QuickRead();
+  
+        auto alarmT = (ot > MAX_OilTemp || 
+          ot < MIN_OilTemp ||
+          op > MAX_OilPress ||
+          op < MIN_OilPress ||
+          fp > MAX_FuelPress ||
+          fp < MIN_FuelPress ||
+          fq1 < MIN_FuelQuantity ||
+          fq2 < MIN_FuelQuantity 
+        ) && blinker > 1;
+  
+        blinker = (blinker + 1) % 4;
+  
+        digitalWrite(ALARM_PIN, alarmT ? HIGH : LOW);
+      }
+  }
+  if (deltaT > 300)
+    lastmillis = now;
 
-  // -- heading --
-  heading = ReadCompass();
+#ifdef  SENSOR_CONFIG
+  {
+    lcd.setCursor(0, 0);                                 // go to the next line
+    lcd.print(Format(airspeed.RawRead(), 3, ' '));       // 3
+    lcd.print(' ');
+    lcd.print(Format(fuelQ1.RawRead(),3, '0'));      // 3   
+    lcd.print(' ');  
+    lcd.print(Format(fuelQ2.RawRead(),3, '0'));      // 3 
+    lcd.print(' ');  
+    lcd.print(Format(altitude, 4, ' ')); // 15
 
+    lcd.setCursor(0, 1);                       // go to the next line
+    lcd.print("   ");
+    lcd.print(Format(oilTemp.RawRead(), 3, '0')); // 8
+    lcd.print(' ');  
+    lcd.print(Format(oilPres.RawRead(), 3, '0')); // 13
+    lcd.print(' ');  
+    lcd.print(Format(fuelPres.RawRead(), 3, '0')); // 16
+    return;
+  }
+#endif 
 
-  auto ot = oilTemp.Read();
-  auto op = oilPres.Read();
-  auto fp = fuelPres.Read();
-  auto fq1 = fuelQ1.Read(); fq1 = fq1 < 0 ? 0 : fq1;
-  auto fq2 = fuelQ2.Read(); fq2 = fq2 < 0 ? 0 : fq2;
-
-  auto alarmT = (ot > MAX_OilTemp || 
-      ot < MIN_OilTemp ||
-      op > MAX_OilPress ||
-      op < MIN_OilPress ||
-      fp > MAX_FuelPress ||
-      fp < MIN_FuelPress ||
-      fq1 < MIN_FuelQuantity ||
-      fq2 < MIN_FuelQuantity 
-    ) && blinker > 10;
-
-  blinker = (blinker + 1 ) % 20;
-  digitalWrite(ALARM_PIN, alarmT ? HIGH : LOW);
-
-//  lcd.clear();
+#ifdef SHOW_RAW_COMPASS
+  lcd.setCursor(0,0);
+  ShowRawCompass();
+  return;
+#endif
 
   lcd.setCursor(0, 0);                                 // go to the next line
-  lcd.print(Format(airspeed.Read(), 3, ' '));          // 3
+  lcd.print(Format(airspeed.QuickRead(), 3, ' '));          // 3
   lcd.print("   ");                                    // 6
   lcd.print(Format(heading - heading % 5, 3, '0'));    // 9
   lcd.print((char)0xdf);                               // 10
@@ -111,10 +158,10 @@ void NormalDisplay()
   {
     lcd.print(Format(tachometer, 4, '0'));     // 4
     lcd.print(' ');                            // 5
-    lcd.print(Format(oilTemp.Read(), 3, ' ')); // 8
+    lcd.print(Format(oilTemp.QuickRead(), 3, ' ')); // 8
     lcd.print((char)0xdf);                     // 9 deg
-    lcd.print(Format(oilPres.Read(), 4, ' ')); // 13
-    lcd.print(Format(fuelPres.Read(), 3, ' ')); // 16
+    lcd.print(Format(oilPres.QuickRead(), 4, ' ')); // 13
+    lcd.print(Format(fuelPres.QuickRead(), 3, ' ')); // 16
   }
   else if (page == FuelPage)
   {
@@ -122,16 +169,16 @@ void NormalDisplay()
     lcd.print('.');                           // 3
     lcd.print(Format(fq1%10, 1, '0'));     // 4
     lcd.print('g');                           // 5
-    lcd.print("-fuel-");                       // 11
+    lcd.print("<fuel>");                       // 11
     lcd.print(Format(fq2/10, 2, ' '));     // 13
     lcd.print('.');                           // 14
     lcd.print(Format(fq2%10, 1, '0'));     // 15
-//    lcd.print('g');                           // 16
+    lcd.print('g');                           // 16
 
-    lcd.print(Format(oilTemp.Read(), 3, ' ')); // 8
+    lcd.print(Format(oilTemp.QuickRead(), 3, ' ')); // 8
     lcd.print((char)0xdf);                     // 9 deg
-    lcd.print(Format(oilPres.Read(), 4, ' ')); // 13
-    lcd.print(Format(fuelPres.Read(), 3, ' ')); // 16
+    lcd.print(Format(oilPres.QuickRead(), 4, ' ')); // 13
+    lcd.print(Format(fuelPres.QuickRead(), 3, ' ')); // 16
   }
 }
 
@@ -145,6 +192,8 @@ void setup()
     barrow = 2992;
 
   altimeter.begin();
+
+  InitCompass();
 
   lcd.begin(16, 2); // initialize the lcd for 20 chars 4 lines and turn on backlight
   lcd.backlight();
@@ -188,6 +237,7 @@ void loop()
         return;
     }
     inSetBarrowMode = true;
+    altitude = GetAltitude();
   }
 
   // Detect setup mode select on boot
@@ -204,12 +254,7 @@ void loop()
     powerOn = false;
   }
 
-  // fetch the altitude
-  altitude = GetAltitude();
-
-  if (inConfigMode)
-    ConfigureModeDisplay(buttsUp);
-  else if (!inSetBarrowMode)
+  if (!inSetBarrowMode)
     NormalDisplay();
 
   page = (encoder/4 + PageCount) % PageCount;
