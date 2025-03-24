@@ -45,8 +45,8 @@ There are only 8 analog input channels. That is limiting, but can support all re
 
 ### MCU - "Pro Micro atmega32u4"
 
-### IMU
-- GY-652 "10-dof IMU" consists of...
+### Compass and Altitude
+- GY-652 is a 3-axis magetometer and absolute pressure sensor
    - MPU9250 - 3-Acc + 3-Gyro + 3-Mag  NOTE: Code uses HMC5883. MPU9250 is newer, I would substitute.
    - BMP180  - Altimeter
 
