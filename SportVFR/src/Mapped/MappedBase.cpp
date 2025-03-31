@@ -2,7 +2,7 @@
 
 #define PARAM_OFFSET 4
 
-MappedBase::MappedBase(byte flashIndex) : filter(SimpleKalmanFilter(2.0f, 2.0f, 0.001))
+MappedBase::MappedBase(byte flashIndex) : filter(SimpleKalmanFilter(1.0f, 1.0f, 0.01))
 {
     FlashIndex = flashIndex;
     get();

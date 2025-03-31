@@ -7,6 +7,8 @@ LiquidCrystal_I2C lcd(0x27, 20, 4); // set the LCD address to 0x27 for a 16 char
 #include <ezButton.h>
 ezButton button(6); // 6 on the PCB
 
+String Error = ""; // Error message
+
 #include <EEPROM.h>
 #include <SimpleKalmanFilter.h>
 
@@ -23,8 +25,9 @@ ezButton button(6); // 6 on the PCB
 #define MIN_FuelQuantity 30 // 3.0g
 #define ALARM_PIN 9 // On 8 on the PCB
 
-#include "MappedADC.hpp"
-#include "MappedAirspeed.hpp"
+#include "Mapped/MappedADC.hpp"
+#include "Mapped/MappedAirspeed.hpp"
+
 
 MappedAirspeed airspeed(0); // pressure sensor
 MappedADC oilPres(A1, 1);
@@ -46,7 +49,8 @@ int barrow;
 bool up;
 bool down;
 unsigned long now;
-const int barrowOffset = 3019 - 2995 - 4;  // current local barrow setting - what SportVFR shows as your altitude
+const int sensorCalibration = 3031-3034;  // current reference barrometeric pressure - pressure you read when you set your altitude
+const int barrowOffset = 2992 + sensorCalibration; // standard + offset for sensor calibration
 
 #define FeetPerMeter 3.28084
 #define MPaPerBarrow_256 8669L  // barrow is 100 * InHq this 256 bigger than it needs to be (simple math)
@@ -181,18 +185,19 @@ void NormalDisplay()
     lcd.print(Format(fuelPres.QuickRead(), 3, ' ')); // 16
   }
 }
-
+bool inError = false;
 void setup()
 {
-//  Serial.begin(9600);
+  Serial.begin(9600);
+  // Serial is being used for it's interupts :(
   attachTachInt();
 
   EEPROM.get(BARROW_EEPROP_OFFSET, barrow);
   if (barrow < 2800)
     barrow = 2992;
 
-  altimeter.begin();
-
+  //airspeed.Initialize();
+  InitAltimeter();
   InitCompass();
 
   lcd.begin(16, 2); // initialize the lcd for 20 chars 4 lines and turn on backlight
@@ -206,6 +211,7 @@ void setup()
   InitializeEncoder();
 
   CalibrationReset();
+  inError = Error.length() > 0;
 }
 
 /*--(end setup )---*/
@@ -214,6 +220,14 @@ void loop()
 {
   button.loop();
   int buttsUp = button.isReleased();
+
+  if (inError){
+     lcd.setCursor(0,0);
+     lcd.print(Error.c_str());
+     inError = !buttsUp;
+     return;
+    }
+
 
   if (inSetBarrowMode)
   {

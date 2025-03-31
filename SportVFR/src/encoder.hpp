@@ -14,18 +14,18 @@ void A_Change()
 {
   a = digitalRead(EncoderPinA);
   if (a ^ b)
-    encoder++;
+    encoder--;
 
   if (!a ^ b)
-    encoder--;
+    encoder++;
 }
 void B_Change()
 {
   b = digitalRead(EncoderPinB);
   if (a ^ !b)
-    encoder++;
-  if (a ^ b)
     encoder--;
+  if (a ^ b)
+    encoder++;
 }
 
 void InitializeEncoder()

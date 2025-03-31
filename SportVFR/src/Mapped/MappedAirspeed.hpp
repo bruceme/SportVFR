@@ -16,7 +16,19 @@ public:
     #define ABP_STATUS_IN_COMMAND 1
     #define ABP_STATUS_STALE_DATA 2
     #define ABP_STATUS_IN_DIAGNOSTICS 3
-        
+    
+    void Initialize()
+    {
+      int c = 20;
+      abpStatus = ABP_STATUS_STALE_DATA;
+      for(;c>0 && abpStatus == ABP_STATUS_STALE_DATA;c--)
+      {
+        delay(10);
+        RawRead(MAX_INT);  
+      }
+      if (0 == c)  
+        Error = "FI: Airspeed";  
+    }
     int RawRead(int maxVal) override
     {
         Wire.requestFrom(ADP_ADDRESS, (uint8_t)2);
