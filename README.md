@@ -105,7 +105,7 @@ Rotary Encoder (CYT1100), usually comes with a small knob
 |                       |             |         |
 |                       | Sub-Total   | $117.20 |
 |                       |             |         |
-| Total. System Cost    |             | $206.86 |
+| Total. System Cost    |             | $174.36 |
 
 ## The build
 
