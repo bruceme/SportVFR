@@ -1,6 +1,6 @@
 # SportVFR
 
-!CATION! - Work in progress (see updates coming soon, mostly to the code)
+!CATION! - Work in progress (see updates coming soon)
 
 An open-source DIY flight instrument
 
@@ -12,6 +12,30 @@ Early Prototype (will post updates once v2 is ready, early April 2025)
 
 ![alt text](https://4.bp.blogspot.com/-GkP8dgFIXWg/WY2YKC37I7I/AAAAAAAAMsY/HeARyIRffEwuhb2vx854bXn1ijqGvWt4QCKgBGAs/s1600/20160601_071528.jpg "Sport VFR DIY project")
 
+# V0.2 Update (3/31/2025)
+
+![SportVFR0_2](images/SportVFR%20v0.2.png)
+I've been doing a lot of work on this, and I've made several big improvements.
+
+New Wiring Diagram
+![SportVFR_0_2_Wiring](images/SportVFR%20v0.2%20Wiring.png)
+
+
+1. There's now a DSub-15 pinout with more grounds. unfortunately, couldn't add all the 5V-Out for sensor power needed; there's just one.
+1. Using op-amps to measure resistance sensors (OT, FQ1, FQ2), better all around
+1. Integrated the magnetometer and absolute pressure sensors into the board design.  This lowers the project cost and makes the BOM smaller and the project simpler to build.
+1. I've tested every sensor/instrument and gotten them all working
+1. Code changes
+ - Lots of simple fixes
+ - Sensor-read-skip.  There's 7+ sensors to ready now, It's best to kkin sensor reads each cycle so the slow sensor reads update less frequently than the page display, big performance boost.
+ - Created a fuel quantity page
+
+# V0.3 Updates (tbd)
+
+1. DSub25 with more grounds and 5v-Out for sensors
+2. Aux1-5 with Aux1 pre-conditioned for low impedence sensors (another fuel quantity, etc)
+3. Fuel Flow sensor added
+
 # The Project
 
 ## Engine/Aircraft System Data Acquisition
@@ -20,35 +44,22 @@ There are only 8 analog input channels. That is limiting, but can support all re
 |                          | Interface         | Sensor     |
 |--------------------------|-------------------|------------|
 | Airspeed                 | Serial - I2C      | ABPMRRV060MG2A3 |
-| Altitude                 | Serial - I2C      | BMP180 (GY-652) |
-| Compass                  | Serial - I2C      | MPU9250 (GY-652)|
-| Engine RPM               | Digital - Counter |            |
-| Oil Temperature          | Analog Resistive  |            |
-| Oil Pressure             | Analog Resistive  |            |
-| Fuel Pressure            | Analog Resistive  |            |
-| Fuel Quantity, each tank | Analog Resistive  |            |
+| Altitude                 | Serial - I2C      | GZP6816D |
+| Compass                  | Serial - I2C      | TLV493DA1B6HTSA2 |
+| Engine RPM               | Counter 0-5v | Direct Messure  |
+| Oil Temperature          | Analog Resistive  | Low-Impedence Amp  |
+| Oil Pressure             | 0-5v  | 5V Pressure Gauge  |
+| Fuel Pressure            | 0-5v  | 5V Pressure Gauge  |
+| Fuel Quantity, each tank | Analog Resistive  | Low-Impedence Amp |
+| Fuel Flow 		   | Counter 0-5v  | BM8563 |
 | Tach Hour Meter	   | Uses Tach and time|            |
-
-<!---
-	That leaves any or / all of these non-mandated data points commonly measured on most aircraft;
-
-|                          | Interface         | Sensor     |
-|--------------------------|-------------------|------------|
-| Electric System Voltage  | Analog            |            |
-| Ammeter                  | I2C               | ACS712ELC  |
-| Cylinder Head 1-6        | Analog Resistive  |            |
-| Exhaust Gas   1-6        | Analog Resistive  |            |
-| Fuel Flow                | Digital - Counter |            |
--->
 
 ## BOM
 
 ### MCU - "Pro Micro atmega32u4"
 
 ### Compass and Altitude
-- GY-652 is a 3-axis magetometer and absolute pressure sensor
-   - MPU9250 - 3-Acc + 3-Gyro + 3-Mag  NOTE: Code uses HMC5883. MPU9250 is newer, I would substitute.
-   - BMP180  - Altimeter
+  Built into the board
 
 ### Air Pressure sensors
 [ABPMRRV060MG2A3](https://www.mouser.com/ProductDetail/Honeywell/ABPMRRV060MG2A3?qs=OTrKUuiFdkZ2B8eiLukmLQ%3D%3D)
@@ -76,15 +87,14 @@ Rotary Encoder (CYT1100), usually comes with a small knob
 | Sport VFR             |             |         |
 | --------------------- | ----------- | ------- |
 |                       | Source      | Amount  |
-| PCB Board             | email me    | $10.00  |
-| Case                  | thingiverse | $15.00  |
+| PCB Board             | email me    | $4.50  |
+| Case                  | thingiverse | $10.00  |
 | ProMicro              | Jungle      | $7.00   |
 | Airspeed              | Mouser      | $35.00  |
-| IMU                   | Jungle      | $22.00  |
 | Rotary Encoder        | Jungle      | $0.56   |
 | Alert LED / Resistors | Jungle      | $0.10   |
 |                       |             |         |
-|                       | Sub-Total   | $89.66  |
+|                       | Sub-Total   | $57.16  |
 |                       |             |         |
 | Sample Sensor BOM     |             |         |
 |                       |             |         |
@@ -103,7 +113,7 @@ Rotary Encoder (CYT1100), usually comes with a small knob
 
 
 
-The [SportVFR v2 Board](scheamtic/SportVFR_V2.zip) contains the Gerber files. These can be fabricated by multiple vendors.  My run of 5 was $20 shipped.  Most components are through-hole, but some are "large" format surface mounts that can be soldered by hand with medium soldering skills.  Installing the DB-9 right-angle connector is preferred so you can remove the display quickly later to work on your panel, but you may directly solder the input wires to the through-holes.
+The [SportVFR v0.2 Board](scheamtic/SportVFR.0.0.2.zip) contains the Gerber files. These can be fabricated by multiple vendors.  My run of 5 was $20 shipped.  Most components are through-hole, but some are "large" format surface mounts that can be soldered by hand with medium soldering skills.  Installing the DB-9 right-angle connector is preferred so you can remove the display quickly later to work on your panel, but you may directly solder the input wires to the through-holes.
 
 ![SportVFR Board](images/sportvfr%20case.jpeg)
 
@@ -120,10 +130,9 @@ Calibration points/ commands are:
 You enter compass calibration mode by holding down the encoder button while powering up the unit.  From there you'll be prompted to move the plane in a circle... just follow the prompts.
 
 NOTE: When the in-code varaibles is set to "InCalibrationMode = true" The display is outputing raw values.  The layout is similar to but not identical to the normal display mode in order to show all sensors outputs.  It as as follows:
-|                       |             |             |           |
-| --------------------- | ----------- | ----------- |---------- |
-| Airspeed              | Fuel Tank 1 | Fuel Tank 2 | Altitude  |
-| Oil Temperature       | Oil Press   | Fuel Press  |           | 
+| Airspeed              | Heading  	| Altitude    |	 Up/down   |
+| --------------------- | ----------- 	| ----------- |----------  |
+| Tachometer 		| Oil Temp      | Oil Press   | Fuel Press | 
 
 
 How to calibrate various sensors:  This calibration requires you to record values from the unconfigured device and enter them into the code.  You can always re-run these test by setting "InCongig" true and the values will get displayed.
