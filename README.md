@@ -13,8 +13,8 @@ Early Prototype (will post updates once v2 is ready, early April 2025)
 ![alt text](https://4.bp.blogspot.com/-GkP8dgFIXWg/WY2YKC37I7I/AAAAAAAAMsY/HeARyIRffEwuhb2vx854bXn1ijqGvWt4QCKgBGAs/s1600/20160601_071528.jpg "Sport VFR DIY project")
 
 # V0.3 Update (1/21/2026)
-![SportVFR Round](images/SportVFR_Round.jpeg)
-![SportVFR Round Back](images/SportVFR_Round_Back.jpeg)
+![SportVFR Round](images/SportVFR_Round.jpg)
+![SportVFR Round Back](images/SportVFR_Round_Back.jpg)
 
 The most obvious and immediate change is that I switched to the higher speed and higher GPIO pin count on the STM32F103 "Blue Pill".
 
@@ -34,7 +34,7 @@ Oil Pressure / Fuel Pressure - I use 3-wire pressure sensors; they are much easi
 
 Outside Air Temp - I used a Dallas one-wire temperature probe.  It's a digital response and highly accurate from -20C - 100C.  I 3d printed a fuse-skin mounting bracket.
 
-![Oat Bracket](images/oat_bracket.jpeg)
+![Oat Bracket](images/oat_bracket.jpg)
 
 The Tachometer and Fuel Flow are both pulse count sensors.  This is best done using the built-in hardware clock timers, the code is well documented.  This is not yet tested, and I'm sure there will be tweaks as I get into real-world testing. 
 
