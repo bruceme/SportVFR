@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"name": "SportVFR STM32",
+			"path": "../../../../PlatformIO/Projects/SportVFR STM32"
+		}
+	],
+	"settings": {}
+}

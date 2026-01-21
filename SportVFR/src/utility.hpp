@@ -63,3 +63,90 @@ char *Format(int value, int width, char pad)
     *--val = pad;
   return val;
 }
+
+
+byte Level[8]{
+    B00000,
+    B00000,
+    B00000,
+    B11111,
+    B11111,
+    B00000,
+    B00000,
+    B00000};
+
+byte UpArrow1[8]{
+    B00000,
+    B00000,
+    B00100,
+    B01110,
+    B11011,
+    B10001,
+    B00000,
+    B00000};
+
+byte UpArrow2[8]{
+    0b00100,
+    0b01110,
+    0b11011,
+    0b10001,
+    0b00100,
+    0b01110,
+    0b11011,
+    0b10001};
+
+const byte DownArrow1[8]{
+    0b00000,
+    0b00000,
+    0b10001,
+    0b11011,
+    0b01110,
+    0b00100,
+    0b00000,
+    0b00000};
+
+const byte DownArrow2[8]{
+    0b10001,
+    0b11011,
+    0b01110,
+    0b00100,
+    0b10001,
+    0b11011,
+    0b01110,
+    0b00100};
+
+    const byte Knots[8]{
+      0b10010,
+      0b10100,
+      0b11000,
+      0b10100,
+      0b10010,
+      0b00111,
+      0b00010,
+      0b00010};
+    
+    const byte GPH[8]{
+      0b01100,
+      0b10000,
+      0b10100,
+      0b01100,
+      0b00000,
+      0b00101,
+      0b00111,
+      0b00101};
+
+#define ChCustomerChar0 0
+#define ChDownArrow1 ChCustomerChar0
+#define ChDownArrow2 ChCustomerChar0 + 1
+#define ChLevel    ChCustomerChar0 + 2
+#define ChUpArrow2 ChCustomerChar0 + 3
+#define ChUpArrow1 ChCustomerChar0 + 4
+
+void SetupLCDCustomCharacters()
+{
+  lcd.createChar(ChLevel, (char *)Level);
+  lcd.createChar(ChUpArrow1, (char *)UpArrow1);
+  lcd.createChar(ChUpArrow2, (char *)UpArrow2);
+  lcd.createChar(ChDownArrow1, (char *)DownArrow1);
+  lcd.createChar(ChDownArrow2, (char *)DownArrow2);
+}

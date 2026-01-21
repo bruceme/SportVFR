@@ -5,12 +5,12 @@ void tachInt()
   revolutions++;
 }
 
-#define TachPin 1       // 7 on the PCB
+#define TachPin 7       // 7 on the PCB
 #define PulsesPerRev 2 // set by magneto mfg
 void attachTachInt()
 {
-//    pinMode(TachPin, INPUT_PULLUP);
-    // attachInterrupt(tachIntNum, tachInt, FALLING);
+    pinMode(TachPin, INPUT_PULLUP);
+    attachInterrupt(digitalPinToInterrupt(TachPin), tachInt, FALLING);
 }
 
 int ReadTachometer()

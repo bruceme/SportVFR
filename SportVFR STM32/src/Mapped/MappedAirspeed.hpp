@@ -1,3 +1,5 @@
+#pragma once
+
 #include <Arduino.h>
 #include <Wire.h>
 #include "MappedBase.hpp"
@@ -24,12 +26,12 @@ public:
       for(;c>0 && abpStatus == ABP_STATUS_STALE_DATA;c--)
       {
         delay(10);
-        RawRead(MAX_INT);  
+        RawRead();  
       }
       if (0 == c)  
         Error = "FI: Airspeed";  
     }
-    int RawRead(int maxVal) override
+    int RawRead() override
     {
         Wire.requestFrom(ADP_ADDRESS, 2);
         if (Wire.available())

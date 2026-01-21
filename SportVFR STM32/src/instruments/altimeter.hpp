@@ -1,3 +1,5 @@
+#pragma once
+
 #include <SimpleKalmanFilter.h>
 
 SimpleKalmanFilter altitudeFilter(2, 2, 0.01);
@@ -7,9 +9,11 @@ SimpleKalmanFilter altitudeFilter(2, 2, 0.01);
 #ifdef HX701B_Altimeter
 #include "HX710AB.h"
 
+// HX710AB is __NOT__ I2C - it is a custom 2-wire interface ADC for load cells and pressure sensors
+
 //  adjust pins to your setup
-uint8_t dataPin = 6;
-uint8_t clockPin = 7;
+uint8_t dataPin = PB12;
+uint8_t clockPin = PB13;
 
 HX710B HX(dataPin, clockPin);
 
