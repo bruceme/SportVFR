@@ -1,6 +1,6 @@
 # SportVFR
 
-!CATION! - Work in progress (see updates coming soon)
+!CATION! - Continued work in progress
 
 An open-source DIY flight instrument
 
@@ -11,6 +11,28 @@ An open-source DIY flight instrument
 Early Prototype (will post updates once v2 is ready, early April 2025)
 
 ![alt text](https://4.bp.blogspot.com/-GkP8dgFIXWg/WY2YKC37I7I/AAAAAAAAMsY/HeARyIRffEwuhb2vx854bXn1ijqGvWt4QCKgBGAs/s1600/20160601_071528.jpg "Sport VFR DIY project")
+
+# V0.3 Update (1/21/2026)
+
+The most obvious and immediate change is that I switched to the higher speed and higher GPIO pin count on the STM32F103 "Blue Pill".
+
+From feedback, I built a 3-1/8" Round version of the SportVFR, it's built from the identical schematic as the rectangular version. 
+
+I'm preparing to build a flying version, which is an engine monitor only for now.  I will add the airspeed, compass, and altimeter soon, but focusing on the engine sensors and monitoring allows me to finalize them.
+
+I struggled with the configuration so much that I just removed it for now.  It will work for the exact engine sensors I have, if you need to tweak the coefficients for your sensors or use different kinds of sensors, you'll have to change the code for now.  I am thinking about techniques for accommodating various sensors in the hardware and software, but for now, I'm keeping it simple.
+
+Sensors... A constant struggle.  I have settled on a few basic things around sensors.
+
+Fuel Quantity Sensors - Low impedance resistive.  They use a precision op-amp to convert low-current/voltage signals into the analog 0-3.3v signal for the ADC.  I have 4 channels of op-amps.
+
+Oil Temperature - I'm using the Westech oil temp sensor.  It reads 10k-Ohms at 0C, 1.6k Ohms at 39C, 212 Ohms at 100C.  This is easily a low current (0.5ma @ 120C/250F) with a simple voltage divider using a high-precision pull-up resistor.  The code interpolates the logarithmic temperature response curve to give highly accurate temperatures.
+
+Oil Pressure / Fuel Pressure - I use 3-wire pressure sensors; they are much easier to handle and just return voltages from 0.3 - 2.7v using a 3.3v source.  Super simple, also curve-fit-interpolated by the code from measured data.
+
+Outside Air Temp - I used a Dallas one-wire temperature probe.  It's a digital response and highly accurate from -20C - 100C.  I 3d printed a fuse-skin mounting bracket.
+
+The Tachometer and Fuel Flow are both pulse count sensors.  This is best done using the built-in hardware clock timers, the code is well documented.  This is not yet tested, and I'm sure there will be tweaks as I get into real-world testing. 
 
 # V0.2 Update (3/31/2025)
 
