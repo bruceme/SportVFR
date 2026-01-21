@@ -13,8 +13,7 @@ Early Prototype (will post updates once v2 is ready, early April 2025)
 ![alt text](https://4.bp.blogspot.com/-GkP8dgFIXWg/WY2YKC37I7I/AAAAAAAAMsY/HeARyIRffEwuhb2vx854bXn1ijqGvWt4QCKgBGAs/s1600/20160601_071528.jpg "Sport VFR DIY project")
 
 # V0.3 Update (1/21/2026)
-![SportVFR Round](images/SportVFR_Round.jpg)
-![SportVFR Round Back](images/SportVFR_Round_Back.jpg)
+<img src="images/SportVFR_Round.jpg" width="50%"><img src="images/SportVFR_Round_Back.jpg" width="39%">
 
 The most obvious and immediate change is that I switched to the higher speed and higher GPIO pin count on the STM32F103 "Blue Pill".
 
