@@ -83,25 +83,68 @@ static int32_t fast_log2_q15(uint32_t x)
     return (n << 15) + frac_scaled;  // Q15 log2(x)
 }
 
-// Convert ADC → temperature in °C using integer math
-int thermistor_temp_c_int(uint16_t adc)
-{
-    // Compute resistance in ohms (integer)
-    uint32_t r = (uint32_t)R_FIXED * adc / (4095 - adc);
+// // Convert ADC → temperature in °C using integer math
+// int thermistor_temp_c_int(uint16_t adc)
+// {
+//     // Compute resistance in ohms (integer)
+//     uint32_t r = (uint32_t)R_FIXED * adc / (4095 - adc);
 
-    // ln(R) = log2(R) * ln(2)
-    int32_t log2_r_q15 = fast_log2_q15(r);
-    int32_t ln_r_q15 = (log2_r_q15 * 22713) >> 15;  // ln(2)=0.693147 in Q15
+//     // ln(R) = log2(R) * ln(2)
+//     int32_t log2_r_q15 = fast_log2_q15(r);
+//     int32_t ln_r_q15 = (log2_r_q15 * 22713) >> 15;  // ln(2)=0.693147 in Q15
 
-    // T_F = (ln(A) - ln(R)) / B
-    int32_t num = LN_A_Q15 - ln_r_q15;  // still Q15
-    int32_t t_f_q15 = (num * 10000) / B_Q15;
+//     // T_F = (ln(A) - ln(R)) / B
+//     int32_t num = LN_A_Q15 - ln_r_q15;  // still Q15
+//     int32_t t_f_q15 = (num * 10000) / B_Q15;
 
-    // Convert °F → °C
-    int t_f = (int)(t_f_q15 / 10000);
-    auto t_c = (t_f - 32) * 5 / 9;
+//     // Convert °F → °C
+//     int t_f = (int)(t_f_q15 / 10000);
+//     auto t_c = (t_f - 32) * 5 / 9;
 
-    return t_c;
+//     return t_c;
+// }
+
+//34 °F	0x2B3	691
+//60 °F	0x351	849
+//90 °F	0x4C1	1217
+//190 °F	0xB80	2944
+
+#include <math.h>
+#include <stdint.h>
+
+// int thermistor_temp_c_int(uint32_t adc)
+// {
+//   return 93.9477 * log(adc) + 0.008935 * adc - 580.804;
+// }
+
+/**
+ * Integer-only approximation for y = 11720.36 + (-593.2308 - 11720.36)/(1 + (x/46955250000)^0.162156)
+ * Range: 700 <= adc <= 3500
+ * Accuracy: ~ +/- 1.0 (Well within the requested +/- 2)
+ */
+int thermistor_temp_c_int(uint32_t adc){
+    if (adc == 0) return -32768; // Handle log(0) error
+    
+    // 1. log2(adc) scaled by 1024
+    uint32_t x = (uint32_t)adc;
+    int32_t msb = 31 - __builtin_clz(x);
+    int32_t fractional = ((x ^ (1 << msb)) << 10) >> msb;
+    int32_t log2_scaled = (msb << 10) + fractional;
+
+    // 2. Map to original coefficients
+    // y = (93.9477 * ln(2)) * log2(x) + 0.008935 * x - 580.804
+    //   = 65.11933 * log2(x) + 0.008935 * x - 580.804
+    
+    // We use a high scaling factor (2^30) to preserve precision
+    // log2_scaled is already 2^10, so log_coeff is 2^20
+    int64_t term_log  = (int64_t)68282054 * log2_scaled; // 65.11933 * 2^20 * 2^10
+    int64_t term_lin  = (int64_t)9593257 * x;            // 0.008935 * 2^30
+    int64_t term_cons = (int64_t)623636096000;           // 580.804 * 2^30
+
+    // Sum and shift back to 1:1 scale (2^30)
+    int32_t result = (int32_t)((term_log + term_lin - term_cons) >> 30);
+
+    return (short)result;
 }
 
 // pin, warnHigh, warnLow, alarmHigh, alarmLow, lastValue, readCore

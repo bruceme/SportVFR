@@ -32,7 +32,9 @@ void Display()
 
   if (encoder < 0)
     encoder = 2;
-  page = 1 + (encoder/2 % 2); 
+
+  if (page != RawDisplayPage)
+    page = 1 + (encoder/2 % 2); 
 }
 
 bool isButtonPressed();
