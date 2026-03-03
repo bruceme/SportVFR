@@ -13,11 +13,14 @@ struct sensor
   int warnLow;
   int alarmHigh;
   int alarmLow;
+  byte displayDigits;
+  char pad;
   // int Value() { return lastValue; }
   // int RawValue() { return analogRead(pin); } 
   AlarmState (*readCore)(sensor *thisSensor);
-  SimpleKalmanFilter filter = SimpleKalmanFilter(1.0f, 1.0f, 0.01);
+  SimpleKalmanFilter filter = SimpleKalmanFilter(1.0f, 1.0f, 0.00033f);
   int lastValue = 0;
+  AlarmState lastAlarm = NONE;
 };
 
 struct multiPoint
@@ -33,8 +36,9 @@ extern sensor FuelQuantity1;
 extern sensor FuelQuantity2;
 extern sensor FuelFlow;
 extern sensor Tachometer; 
+extern sensor Altimeter;
 
-extern sensor sensors[]; 
+extern sensor *Sensors[]; 
 
 void PollAllSensors();
 

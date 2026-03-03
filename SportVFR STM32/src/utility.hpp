@@ -73,16 +73,42 @@ int atan2deg(int y, int x)
 
     return angle;
 }
-
+#include "sensors.hpp"
+extern bool blinkOff;
 
 char *Format(int value, int width, char pad)
 {
   char *val = my_itoa(value);
+
   for(short i = width - strlen(val); i > 0; i--)
     *--val = pad;
+  val[width] = '\0';
   return val;
 }
 
+bool FormatBlankOnBlink(const sensor &sensor, char *buf)
+{
+  if (sensor.lastAlarm != NONE && blinkOff)
+  {
+    auto widthT = (sensor.displayDigits > 4) ? 4 : sensor.displayDigits;
+
+    for (int i = 0; i < widthT; i++)
+      buf[i] = ' ';
+    buf[widthT] = '\0';
+    return true;
+  }
+
+  return false;
+}
+
+char * FormatSensor(const sensor &sensor)
+{
+  static char buf[5]="";
+  if (FormatBlankOnBlink(sensor,buf))
+    return buf;
+
+  return Format(sensor.lastValue, sensor.displayDigits, sensor.pad);
+}
 
 // byte Level[8]{
 //     B00000,

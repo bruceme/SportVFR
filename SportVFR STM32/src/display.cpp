@@ -7,35 +7,42 @@
 //#include "encoder.hpp"
 #include "sensors.hpp"
 
-void DisplayOneDec(int value)
+bool FormatBlankOnBlink(const sensor &, char *);
+
+void DisplayOneDec(const sensor &sensor)
 {
-    lcd.print(Format(value / 10, 2, ' ')); // 0 fuelQ1
-    lcd.print('.');
-    lcd.print((char)('0' + (value % 10))); // 0 fuelQ1
+    static char buf[5]="";
+    if (FormatBlankOnBlink(sensor, buf)){
+        lcd.print(buf);
+        lcd.print("  ");
+    }
+    else
+    {
+        lcd.print(Format(sensor.lastValue / 10, 2, ' '));
+        lcd.print('.');
+        lcd.print((char)('0' + (sensor.lastValue % 10))); // 0 fuelQ1
+    }
 }
 
 int AirspeedHeadingAltitude()
 {
-    lcd.setCursor(0, 1);                             // set cursor
+    lcd.setCursor(0, 0);                             // set cursor
 
-    // lcd.print(Format(airspeed.QuickRead(), 3, ' ')); // 0 airspeed
-    // lcd.print("   ");                                 // 3
-    // lcd.print(Format(heading, 3, ' '));              // 7
-    // lcd.print((char)0xdf);                           // 8 degree symbol
-    // lcd.print(' ');                                  // 9
-    // lcd.print(Format(altitude, 5, ' '));             // 16
+    lcd.print(Format(airspeed.QuickRead(), 3, ' ')); // 0 airspeed
+    lcd.print("   ");                                 // 3
+    lcd.print(Format(heading, 3, ' '));              // 7
+    lcd.print((char)0xdf);                           // 8 degree symbol
+    lcd.print(' ');                                  // 9
+    lcd.print(FormatSensor(Altimeter));             // 16
 
-    DisplayOneDec(FuelQuantity1.lastValue);
-    lcd.print ("g ");
-    DisplayOneDec(FuelFlow.lastValue);
-    lcd.print (' ');
-    DisplayOneDec(FuelQuantity2.lastValue);
-    lcd.print ('g');
+    lcd.setCursor(0, 1); 
 
     return DISP_OK;
 }
 
 const char *to_hex12(uint32_t value);
+
+bool FillBlankOnBlink(const sensor &sensor, char *);
 
 int DisplayRawValuesPage()
 {
@@ -46,9 +53,9 @@ int DisplayRawValuesPage()
 
     lcd.setCursor(0, 1);
     lcd.print("    ");
-    lcd.print(to_hex12(analogRead(OilTemperature.pin)));
-    lcd.print(" ");
     lcd.print(to_hex12(analogRead(OilPressure.pin)));
+    lcd.print(" ");
+    lcd.print(to_hex12(analogRead(OilTemperature.pin)));
     lcd.print(" ");
     lcd.print(to_hex12(analogRead(FuelPressure.pin)));
     delay(500);
@@ -57,14 +64,14 @@ int DisplayRawValuesPage()
 
 int DisplayEnginePage() {
     AirspeedHeadingAltitude();
-
-    lcd.setCursor(0, 0);                             // set cursor
+ 
     lcd.print(Format(Tachometer.lastValue, 4, '0'));           // 4
+    lcd.print(' ');                                  // 5
+    lcd.print(Format(OilPressure.lastValue, 2, ' '));  // 13
     lcd.print(' ');                                  // 5
     lcd.print(Format(OilTemperature.lastValue, 3, ' '));  // 8
     lcd.print((char)0xdf);                           // 9 deg
-    lcd.print(Format(OilPressure.lastValue, 4, ' '));  // 13
-    lcd.print(Format(FuelPressure.lastValue, 3, ' ')); // 16
+    DisplayOneDec(FuelPressure);          // 16
 
     return DISP_OK;
 }
@@ -74,16 +81,16 @@ void DisplayOneDecimalInteger(int value);
 int DisplayFuelPage() {
     AirspeedHeadingAltitude();
 
-    DisplayOneDecimalInteger(fuelQ1.Read());    
+    DisplayOneDecimalInteger(FuelQuantity1.lastValue);    
     lcd.print('g');                      // 5
     lcd.print("<fuel>");                 // 11
-    DisplayOneDecimalInteger(fuelQ2.Read());    
+    DisplayOneDecimalInteger(FuelQuantity1.lastValue);    
     lcd.print('g');                      // 16
 
-    lcd.print(Format(oilTemp.QuickRead(), 3, ' '));  // 8
-    lcd.print((char)0xdf);                           // 9 deg
-    lcd.print(Format(oilPres.QuickRead(), 4, ' '));  // 13
-    lcd.print(Format(fuelPres.QuickRead(), 3, ' ')); // 16
+    // lcd.print(Format(oilTemp.QuickRead(), 3, ' ', oilTemp.Last));  // 8
+    // lcd.print((char)0xdf);                           // 9 deg
+    // lcd.print(Format(oilPres.QuickRead(), 4, ' '));  // 13
+    // lcd.print(Format(fuelPres.QuickRead(), 3, ' ')); // 16
 
     return DISP_OK;   
   }
@@ -96,9 +103,9 @@ void DisplayOneDecimalInteger(int value)
 }
 
 
-void DisplayBarro(String Messsage) { 
+void DisplayBarro() { 
     lcd.setCursor(0, 0); // go to the next line
-    lcd.print(Messsage);
+    lcd.print("Set Pressure Alt");
     lcd.setCursor(0, 1);                     // go to the next line
     lcd.print(Format(barrow / 100, 2, ' ')); // 2
     lcd.print('.');                          // 3
@@ -109,7 +116,7 @@ void DisplayBarro(String Messsage) {
 
 int DisplayBaroPage() { 
   barrow = encoder / 2;
-  DisplayBarro("Set Pressure Alt");
+  DisplayBarro();
 
   if (buttUp)
   {

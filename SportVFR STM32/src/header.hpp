@@ -45,7 +45,7 @@ extern int page;
 extern bool buttUp;
 extern bool inError;
 extern String Error; // Error message
-extern int blinker;
+extern bool blinkOff;
 
 #include "Mapped/MappedBase.hpp"
 #include "Mapped/MappedADC.hpp"

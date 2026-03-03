@@ -6,7 +6,6 @@ int page = Page0;
 bool buttUp;
 bool inError = false;
 String Error = ""; // Error message
-int blinker = 0;
 
 MappedAirspeed airspeed(0); // pressure sensor
 MappedADC oilPres(OP_PIN, 1, UNIT_PRESSURE);

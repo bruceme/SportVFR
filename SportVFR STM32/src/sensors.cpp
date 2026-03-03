@@ -2,18 +2,18 @@
 #include "header.hpp"
 #include "sensors.hpp"
 
-AlarmState SensorBoundsCheck(AlarmState alarm, sensor s)
+AlarmState SensorBoundsCheck(AlarmState alarm, sensor *s)
 {
   if (alarm != NONE)
     return alarm;
 
-  if (s.lastValue >= s.alarmHigh)
+  if (s->lastValue >= s->alarmHigh)
     return HIGH_ALARM;
-  if (s.lastValue >= s.warnHigh)
+  if (s->lastValue >= s->warnHigh)
     return HIGH_WARNING;
-  if (s.lastValue <= s.alarmLow)
+  if (s->lastValue <= s->alarmLow)
     return LOW_ALARM;
-  if (s.lastValue <= s.warnLow)
+  if (s->lastValue <= s->warnLow)
     return LOW_WARNING;
 
   return NONE;
@@ -46,21 +46,18 @@ short MapADCToOutput(multiPoint *mp, short adcValue)
     return (short)outT;
 }
 
-sensor OilPressure = {"OP", OP_PIN, MAX_INT, MIN_OilPress + 10, MAX_INT, MIN_OilPress,
+sensor OilPressure = {"OP", OP_PIN, MAX_INT, MIN_OilPress + 10, MAX_INT, MIN_OilPress, 2, '0',
 /// @Derivation
 ///  AskAI: The following measured voltages I'd like to map into 12-bit adc values then 
 ///         curve fit a function that will convert the adc readAnalog value into a pressure. 
 ///         Output a function in 10ths of PSI using only integer math.
 ///         (0psi,0.38v),(40,1.19),(50,1.4),(60,1.74),(70,2.02),(80,2.08),(90,2.55)
     [](sensor *thisSensor) {
-        auto x = analogRead(thisSensor->pin);
+        long x = (long)analogRead(thisSensor->pin);
 
-        int64_t acc = 0;
-        acc += -2LL * x * x;          // A * x^2
-        acc += 412000LL * x;          // B * x
-        acc += -18900000LL;           // C
-
-        thisSensor->lastValue =  (int)(acc / 1000000LL);
+        int psi = (int)(((x << 16) / 1840000) - (((x * x)<<7) / 94336000)) - 8;
+    
+        thisSensor->lastValue = (psi < 15) ? 0 : psi;
 
          return NONE;
      }};
@@ -89,8 +86,6 @@ static int32_t fast_log2_q15(uint32_t x)
 // Convert ADC → temperature in °C using integer math
 int thermistor_temp_c_int(uint16_t adc)
 {
-    if (adc == 4095) return -9999;   // open circuit protection
-
     // Compute resistance in ohms (integer)
     uint32_t r = (uint32_t)R_FIXED * adc / (4095 - adc);
 
@@ -110,28 +105,28 @@ int thermistor_temp_c_int(uint16_t adc)
 }
 
 // pin, warnHigh, warnLow, alarmHigh, alarmLow, lastValue, readCore
-sensor OilTemperature = {"OT", OT_PIN, MAX_OilTemp - 10, MIN_OilTemp + 10, MAX_OilTemp, MIN_OilTemp,
+sensor OilTemperature = {"OT", OT_PIN, MAX_OilTemp - 10, MIN_OilTemp + 10, MAX_OilTemp, MIN_OilTemp, 3, '0',
     [](sensor *thisSensor) {
         thisSensor->lastValue = thermistor_temp_c_int(analogRead(thisSensor->pin));
-        return (thisSensor->lastValue == -9999) ? DATA_MISSING_ALARM : NONE;       
+        return (thisSensor->lastValue < 0) ? DATA_MISSING_ALARM : NONE;       
      }};
 
 
-sensor FuelPressure = {"FP", FP_PIN, MAX_INT, MIN_FuelPress + 10, MAX_INT, MIN_FuelPress,
+sensor FuelPressure = {"FP", FP_PIN, MAX_INT, MIN_FuelPress + 10, MAX_INT, MIN_FuelPress, 3,'0',
     /// @Derivation
     ///  AskAI: The following measured voltages I'd like to map into 12-bit adc values then 
     ///         curve fit a function that will convert the adc readAnalog value into a pressure. 
     ///         Output a function in 10ths of PSI using only integer math.
     ///         (0psi, 0.37v),(15,0.9),(20,1.84),(25,1.92),(30,2.41)
     [](sensor *thisSensor) {
-        auto x = analogRead(thisSensor->pin);
+        long x = analogRead(thisSensor->pin);
 
-        int64_t acc = 0;
-        acc += 17LL * x * x;        // A * x^2
-        acc += -40300LL * x;        // B * x
-        acc += 24100000LL;          // C
+        // y = -96.26 + 0.2071*x - 0.00002242*x^2
+        // 316579 = 2^16 / 0.2071
+        // 5709000 = 2^7 / 0.000022420
+        float p_tenths = ((x<<16)/316579) - (((x * x)<<7)/5709000) - 96;
 
-        thisSensor->lastValue = (int)(acc / 1000000LL);
+        thisSensor->lastValue = (p_tenths < 5) ? 0 : p_tenths;
 
         return NONE;
      }};
@@ -146,14 +141,14 @@ multiPoint fuelQ2mp = {
     .Domain = {0, 21, 43, 64, 86, 107, 129, 150}
 };
 
-sensor FuelQuantity1 = {"<Fuel", FQ1_PIN, 12, 14, MAX_INT, MIN_FuelQuantity,
+sensor FuelQuantity1 = {"<Fuel", FQ1_PIN, MAX_INT, MIN_FuelQuantity+2, MAX_INT, MIN_FuelQuantity,4,'0',
     [](sensor *thisSensor) {
          auto adcValue = analogRead(thisSensor->pin);
          thisSensor->lastValue = MapADCToOutput(&fuelQ1mp, adcValue);
          return NONE;
      }};
 
-sensor FuelQuantity2 = {"Fuel>", FQ2_PIN, 12, 14, MAX_INT, MIN_FuelQuantity,
+sensor FuelQuantity2 = {"Fuel>", FQ2_PIN, MAX_INT, MIN_FuelQuantity+2, MAX_INT, MIN_FuelQuantity,4,'0',
     [](sensor *thisSensor) {
          auto adcValue = analogRead(thisSensor->pin);
          thisSensor->lastValue = MapADCToOutput(&fuelQ2mp, adcValue);
@@ -163,27 +158,39 @@ sensor FuelQuantity2 = {"Fuel>", FQ2_PIN, 12, 14, MAX_INT, MIN_FuelQuantity,
 
 uint32_t GetFuelFlowDLPH();
 
-sensor FuelFlow = {"FF", -1, MAX_INT, -MAX_INT, MAX_INT, -MAX_INT, 
+sensor FuelFlow = {"FF", -1, MAX_INT, -MAX_INT, MAX_INT, -MAX_INT, 3,'0',
     [](sensor *thisSensor) {
          thisSensor->lastValue = GetFuelFlowDLPH(); // Replace with actual fuel flow reading
          return NONE;
      }};
 
  
-sensor Tachometer = {"Tach", -1, 2720, -MAX_INT, 2900, -MAX_INT, 
+sensor Tachometer = {"Tach", -1, 2720, -MAX_INT, 2900, -MAX_INT, 4,' ',
     [](sensor *thisSensor) {
          thisSensor->lastValue = ReadTachometer();
          return NONE;
      }};
 
-sensor sensors[] = {
-    OilPressure,
-    OilTemperature,
-    FuelPressure,
-    FuelQuantity1,
-    FuelQuantity2,
-    FuelFlow,
-    Tachometer
+#include "Adafruit_MCP3421.h"
+extern Adafruit_MCP3421 altitudeADC;
+
+sensor Altimeter = {"Alt", -1, MAX_INT, -MAX_INT,MAX_INT,-MAX_INT, 5,' ',
+      [](sensor *thisSensor) {
+        if (altitudeADC.isReady()) {
+                thisSensor->lastValue = altitudeADC.readADC(); // Read ADC value
+            }
+         return NONE;
+     }};
+
+sensor *Sensors[] = {
+    &OilPressure,
+    &OilTemperature,
+    &FuelPressure,
+    &FuelQuantity1,
+    &FuelQuantity2,
+    &FuelFlow,
+    &Tachometer,
+    &Altimeter
 };
 
 String AlarmNames[] = {
@@ -208,20 +215,18 @@ byte rollingPollingIndex = 0;
 void PollAllSensors()
 {
   for(int i = rollingPollingIndex; 
-    i < sizeof(sensors) / sizeof(sensors[0]); 
+    i < sizeof(Sensors) / sizeof(Sensors[0]); 
     i += rollingPollingIntervals)
   {
-    if (curDeltaTPhase % (sizeof(sensors) / sizeof(sensors[0])) == i)
-    {
-      auto alarm = sensors[i].readCore(sensors+i);
-      sensors[i].lastValue =sensors[i].filter.updateEstimate(sensors[i].lastValue);
-      alarm = SensorBoundsCheck(alarm, sensors[i]);
+      auto alarm = Sensors[i]->readCore(Sensors[i]);
+      Sensors[i]->lastValue = Sensors[i]->filter.updateEstimate(Sensors[i]->lastValue);
+      alarm = Sensors[i]->lastAlarm = SensorBoundsCheck(alarm, Sensors[i]);
+      
       if (alarm != NONE)
       {
         inError = true;
-        Error = sensors[i].name + ": " + AlarmNames[alarm];
+        Error = Sensors[i]->name + ": " + AlarmNames[alarm];
       }
-    }
   }
 
   rollingPollingIndex = (rollingPollingIndex + 1) % rollingPollingIntervals;
